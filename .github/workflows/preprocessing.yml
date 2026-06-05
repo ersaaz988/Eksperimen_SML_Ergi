@@ -1,0 +1,38 @@
+name: Data Preprocessing Automation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'dataset_fintech_agregasi.csv'
+      - 'automate.py'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12.7' # Sesuai standar dicoding
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas Sastrawi tqdm
+
+    - name: Run Automation Script
+      run: python automate.py
+
+    - name: Commit and Push Clean Data
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add dataset_fintech_clean.csv
+        git commit -m "Auto-generate clean dataset" || echo "Tidak ada perubahan data"
+        git push
